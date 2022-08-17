@@ -22,11 +22,12 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
-import com.murgupluoglu.flagkit.FlagKit;
 import com.tennis.cli.tenn.cus.tennisapp.Activities.MainActivity;
 import com.tennis.cli.tenn.cus.tennisapp.Adapters.TopMaleAdapter;
 import com.tennis.cli.tenn.cus.tennisapp.Application.TennisApp;
 import com.tennis.cli.tenn.cus.tennisapp.Application.TennisCommon;
+import com.tennis.cli.tenn.cus.tennisapp.Models.CModel.CListModel;
+import com.tennis.cli.tenn.cus.tennisapp.Models.CModel.CountryModel;
 import com.tennis.cli.tenn.cus.tennisapp.Models.CompetitorsArr;
 import com.tennis.cli.tenn.cus.tennisapp.Models.PlayersModel;
 import com.tennis.cli.tenn.cus.tennisapp.Models.RankingsArr;
@@ -102,6 +103,7 @@ public class RankingFragment extends Fragment {
         recyclerViewMale.setHasFixedSize(true);
 
         topMaleAdapter = new TopMaleAdapter(getActivity());
+
         recyclerViewMale.setAdapter(topMaleAdapter);
 
         recyclerViewFemale= view.findViewById(R.id.recyclerView_top_female);
@@ -122,14 +124,9 @@ public class RankingFragment extends Fragment {
 
                     TennisApp.setSamelMaleOrFemale("MALE");
 
-                    System.out.println("COUNTRY : " + playersModel.getCountry());
-
-                    int flag =  FlagKit.INSTANCE.getResId(getActivity(),"PL");
-
-                    System.out.println("FLAG RES ID IS: " + flag);
 
                     TennisApp.setSameCountry(playersModel.getCountry());
-
+                    TennisApp.setSameCityFrom("RANKING");
                     MainActivity.getNavController().navigate(R.id.action_nav_rankings_to_sameCtyPlayersFragment2);
                 }
 
@@ -159,6 +156,7 @@ public class RankingFragment extends Fragment {
 
                     TennisApp.setSamelMaleOrFemale("FEMALE");
                     TennisApp.setSameCountry(playersModel.getCountry());
+                    TennisApp.setSameCityFrom("RANKING");
                     MainActivity.getNavController().navigate(R.id.action_nav_rankings_to_sameCtyPlayersFragment2);
                 }
 
@@ -281,6 +279,42 @@ public class RankingFragment extends Fragment {
 
             System.out.println("INITIAL SIZE OF LIST IS: " + TennisApp.getMaleRankingsList().size());
 
+            if (TennisApp.getFlagsList() != null && TennisApp.getFlagsList().size() <= 0){
+
+                OkHttpClient client = new OkHttpClient().newBuilder().connectTimeout(40, TimeUnit.SECONDS).readTimeout(40,TimeUnit.SECONDS).build();
+
+                String BASE_URL =  "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/";
+
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(BASE_URL)
+                        .client(client)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+
+
+                Api service = retrofit.create(Api.class);
+
+                service.getConFlags("dist/index.json").enqueue(new Callback<List<CountryModel>>() {
+                    @Override
+                    public void onResponse(Call<List<CountryModel>> call, Response<List<CountryModel>> response) {
+
+                        List<CountryModel> list = response.body();
+                        System.out.println("COUNTRY LIST SIZE IS: " + list.size());
+                        TennisApp.setFlagsList(list);
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<CountryModel>> call, Throwable t) {
+
+                        System.out.println("FLAG EXCEPTION IS: " + t.getMessage());
+
+                    }
+                });
+
+
+
+            }
+
             if (TennisApp.getMaleRankingsList() != null && TennisApp.getMaleRankingsList().size() <= 0) {
 
                 ProgressDialog dialog = new ProgressDialog(getActivity());
@@ -300,60 +334,73 @@ public class RankingFragment extends Fragment {
 
                 Api service = retrofit.create(Api.class);
 
-                service.rankings("rankings.json?api_key=z3fg5q6j88y3223ekuw39yy3").enqueue(new Callback<RankingsModel>() {
+                service.rankings("rankings.json?api_key=bsrp4bft6arabtrrdwjupf25").enqueue(new Callback<RankingsModel>() {
                     @Override
                     public void onResponse(Call<RankingsModel> call, Response<RankingsModel> response) {
 
                         RankingsModel rankingsModel = response.body();
 
-                        List<RankingsArr> rankingsList =  rankingsModel.getRankings();
+                        try {
 
-                        System.out.println("LIST OF Competitor_rankings size : " + rankingsList.get(0).getCompetitor_rankings().size());
+                            List<RankingsArr> rankingsList =  rankingsModel.getRankings();
 
-
-
-                        TennisApp.setMaleRankingsList(rankingsList.get(0).getCompetitor_rankings());
-                        TennisApp.setFemaleRankingsList(rankingsList.get(1).getCompetitor_rankings());
-
-                        if (playersModelListMale == null){
-
-                            playersModelListMale = new ArrayList<>();
-                        }
-
-                        if (playersModelListMale.size() > 0){
-
-                            playersModelListMale.clear();
-                        }
-
-                        if (playersModelListFemale == null){
-
-                            playersModelListFemale = new ArrayList<>();
-                        }
-
-                        if (playersModelListFemale.size() > 0){
-
-                            playersModelListFemale.clear();
-                        }
+                            System.out.println("LIST OF Competitor_rankings size : " + rankingsList.get(0).getCompetitor_rankings().size());
 
 
 
+                            TennisApp.setMaleRankingsList(rankingsList.get(0).getCompetitor_rankings());
+                            TennisApp.setFemaleRankingsList(rankingsList.get(1).getCompetitor_rankings());
 
-                        for (int i = 0 ; i < 20 ; i++){
+                            if (playersModelListMale == null){
 
-                            playersModelListMale.add(new PlayersModel(TennisApp.getMaleRankingsList().get(i).getCompetitor().getId(),"","",TennisApp.getMaleRankingsList().get(i).getCompetitor().getName(),"",TennisApp.getMaleRankingsList().get(i).getPoints()+"",TennisApp.getMaleRankingsList().get(i).getCompetitor().getCountry(),"M"));
-                        }
+                                playersModelListMale = new ArrayList<>();
+                            }
 
-                        for (int i = 0 ; i < 20 ; i++){
+                            if (playersModelListMale.size() > 0){
 
-                            playersModelListFemale.add(new PlayersModel(TennisApp.getFemaleRankingsList().get(i).getCompetitor().getId(),"","",TennisApp.getFemaleRankingsList().get(i).getCompetitor().getName(),"",TennisApp.getFemaleRankingsList().get(i).getPoints()+"",TennisApp.getFemaleRankingsList().get(i).getCompetitor().getCountry(),"F"));
-                        }
+                                playersModelListMale.clear();
+                            }
+
+                            if (playersModelListFemale == null){
+
+                                playersModelListFemale = new ArrayList<>();
+                            }
+
+                            if (playersModelListFemale.size() > 0){
+
+                                playersModelListFemale.clear();
+                            }
 
 
-                        topMaleAdapter.notifyDataSetChanged();
-                        topFemaleAdapter.notifyDataSetChanged();
 
-                        if(dialog.isShowing()) {
-                            dialog.dismiss();
+
+                            for (int i = 0 ; i < 20 ; i++){
+
+                                playersModelListMale.add(new PlayersModel(TennisApp.getMaleRankingsList().get(i).getCompetitor().getId(),"","",TennisApp.getMaleRankingsList().get(i).getCompetitor().getName(),"",TennisApp.getMaleRankingsList().get(i).getPoints()+"",TennisApp.getMaleRankingsList().get(i).getCompetitor().getCountry(),"M"));
+                            }
+
+                            for (int i = 0 ; i < 20 ; i++){
+
+                                playersModelListFemale.add(new PlayersModel(TennisApp.getFemaleRankingsList().get(i).getCompetitor().getId(),"","",TennisApp.getFemaleRankingsList().get(i).getCompetitor().getName(),"",TennisApp.getFemaleRankingsList().get(i).getPoints()+"",TennisApp.getFemaleRankingsList().get(i).getCompetitor().getCountry(),"F"));
+                            }
+
+
+                            topMaleAdapter.notifyDataSetChanged();
+                            topFemaleAdapter.notifyDataSetChanged();
+
+                            if(dialog.isShowing()) {
+                                dialog.dismiss();
+                            }
+
+
+                        }catch (NullPointerException ex){
+
+                            ex.printStackTrace();
+
+                            if(dialog.isShowing()) {
+                                dialog.dismiss();
+                            }
+
                         }
 
 
@@ -415,4 +462,20 @@ public class RankingFragment extends Fragment {
 
     }
 
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        topMaleAdapter = null;
+        topFemaleAdapter = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        topMaleAdapter = null;
+        topFemaleAdapter = null;
+    }
 }

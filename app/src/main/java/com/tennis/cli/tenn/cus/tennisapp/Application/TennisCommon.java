@@ -596,9 +596,7 @@ public class TennisCommon extends AppCompatActivity {
 
         Snackbar.make(weakReferenceView.get(), weakReferenceString.get(), Snackbar.LENGTH_LONG).show();
 
-
     }
-
 
     // checking email is correctly written or not //
     public boolean isValidEmail(CharSequence target) {

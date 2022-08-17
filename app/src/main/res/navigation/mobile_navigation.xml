@@ -23,7 +23,14 @@
         android:id="@+id/nav_players"
         android:name="com.tennis.cli.tenn.cus.tennisapp.Fragments.PlayersFragment"
         android:label="Players"
-        tools:layout="@layout/fragment_players" />
+        tools:layout="@layout/fragment_players" >
+        <action
+            android:id="@+id/action_nav_players_to_sameCtyPlayersFragment"
+            app:destination="@id/sameCtyPlayersFragment" />
+        <action
+            android:id="@+id/action_nav_players_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_tournaments"
@@ -41,6 +48,9 @@
         <action
             android:id="@+id/action_profileFragment_to_sameCtyPlayersFragment"
             app:destination="@id/sameCtyPlayersFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_nav_players"
+            app:destination="@id/nav_players" />
     </fragment>
     <fragment
         android:id="@+id/sameCtyPlayersFragment"
@@ -53,6 +63,9 @@
         <action
             android:id="@+id/action_sameCtyPlayersFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_sameCtyPlayersFragment_to_nav_players"
+            app:destination="@id/nav_players" />
     </fragment>
 
 </navigation>

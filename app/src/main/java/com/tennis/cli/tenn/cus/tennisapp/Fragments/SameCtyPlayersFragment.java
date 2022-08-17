@@ -33,6 +33,8 @@ public class SameCtyPlayersFragment extends Fragment {
     private String from = "";
     private String sameCountry = "";
 
+    private String fromSameCity = "";
+
     private List<PlayersModel> playersModelListMale,playersModelListFemale;
 
 
@@ -54,6 +56,8 @@ public class SameCtyPlayersFragment extends Fragment {
         view =  inflater.inflate(R.layout.fragment_same_cty_players, container, false);
 
         from = TennisApp.getSamelMaleOrFemale();
+        fromSameCity = TennisApp.getSameCityFrom();
+
         sameCountry = TennisApp.getSameCountry();
 
         prepareStaticDate();
@@ -73,10 +77,19 @@ public class SameCtyPlayersFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                if (MainActivity.getNavController() != null && MainActivity.getNavController().getCurrentDestination().getId() == R.id.sameCtyPlayersFragment){
+                if (fromSameCity.contentEquals("RANKING")){
+                    if (MainActivity.getNavController() != null && MainActivity.getNavController().getCurrentDestination().getId() == R.id.sameCtyPlayersFragment){
 
-                    MainActivity.getNavController().navigate(R.id.action_sameCtyPlayersFragment_to_nav_rankings);
+                        MainActivity.getNavController().navigate(R.id.action_sameCtyPlayersFragment_to_nav_rankings);
+                    }
+                }else{
+
+                    if (MainActivity.getNavController() != null && MainActivity.getNavController().getCurrentDestination().getId() == R.id.sameCtyPlayersFragment){
+
+                        MainActivity.getNavController().navigate(R.id.action_sameCtyPlayersFragment_to_nav_players);
+                    }
                 }
+
 
             }
         });
@@ -204,6 +217,22 @@ public class SameCtyPlayersFragment extends Fragment {
 //        }
 //
 //    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        topAdapter = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        topAdapter = null;
+    }
+
 
 
 }

@@ -57,7 +57,6 @@
                 android:layout_height="@dimen/_50sdp"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:src="@drawable/tennis_bck"
                 app:civ_border_color="@color/purple_500"
                 app:civ_border_width="@dimen/_2sdp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -69,7 +68,6 @@
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
                 android:layout_marginStart="@dimen/_8sdp"
-                android:src="@drawable/tennis_bck"
                 app:civ_border_color="@color/purple_500"
                 app:civ_border_width="@dimen/_2sdp"
                 app:layout_constraintBottom_toBottomOf="@id/flag_img"
@@ -147,6 +145,30 @@
                 app:layout_constraintStart_toEndOf="@id/ageTxtView"
                 app:layout_constraintTop_toTopOf="@id/ageTxtView" />
 
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/dobTxtView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="Date of birth: "
+                android:textSize="@dimen/_14ssp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/flag_img"
+                app:layout_constraintTop_toBottomOf="@+id/ageTxtView" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/dob_txt_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:text=""
+                android:textSize="@dimen/_13ssp"
+                app:layout_constraintBottom_toBottomOf="@id/dobTxtView"
+                app:layout_constraintEnd_toEndOf="@id/name_txt"
+                app:layout_constraintStart_toEndOf="@id/dobTxtView"
+                app:layout_constraintTop_toTopOf="@id/dobTxtView" />
+
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/heightTxtView"
                 android:layout_width="wrap_content"
@@ -156,7 +178,7 @@
                 android:textSize="@dimen/_14ssp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/flag_img"
-                app:layout_constraintTop_toBottomOf="@+id/ageTxtView" />
+                app:layout_constraintTop_toBottomOf="@+id/dobTxtView" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/height_txt_info"
